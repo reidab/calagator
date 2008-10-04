@@ -48,7 +48,16 @@
     <%= render(:partial => 'venues/subnav') if link_class[:venues] == 'active' %>
     <%= render(:partial => 'sources/subnav') if link_class[:import] == 'active' %>
   
-  
+    <div id="user-panel">
+      <% if logged_in? %>
+        <%= current_user.label %> 
+        |
+        <%= link_to "Logout", logout_url %>
+      <% else %>
+        <%= link_to "Login", login_url %>
+      <% end %>
+    </div>
+
     <div id="content">
       <%# flash[:success] = "yay"; flash[:failure] = "meh" %>
       <%= render_flash %>
