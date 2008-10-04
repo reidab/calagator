@@ -12,7 +12,6 @@ class SiteController < ApplicationController
   end
 
   def index
-    require 'rubygems'; require 'ruby-debug'; Debugger.start; debugger; 1 # FIXME
     @times_to_events_deferred = lambda { Event.select_for_overview }
   end
   
