@@ -42,6 +42,14 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'css/:name', :controller => 'site', :action => 'style'
   map.connect 'css/:name.:format', :controller => 'site', :action => 'style'
 
+  # Authentication
+  map.resources :users
+  map.resource  :session, :collection => ["admin"]
+  map.open_id_complete 'session', :controller => "sessions", :action => "create", :requirements => { :method => :get }
+  map.login            '/login',  :controller => 'sessions', :action => 'new'
+  map.logout           '/logout', :controller => 'sessions', :action => 'destroy'
+  map.admin            '/admin',  :controller => 'sessions', :action => 'admin'
+
   # Site root
   map.root :controller => "site"
 

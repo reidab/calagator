@@ -12,6 +12,9 @@ class ApplicationController < ActionController::Base
 
   # For vendor/plugins/exception_notification
   include ExceptionNotifiable
+
+  # Be sure to include AuthenticationSystem in Application Controller instead
+  include AuthenticatedSystem
 end
 
 # Make it possible to use helpers in controllers
