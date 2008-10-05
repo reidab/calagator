@@ -71,6 +71,14 @@
   </ul>
 <hr />
   <h3>Reservations</h3>
+    <% if logged_in? %>
+      <% if current_user.reservations.find_by_event_id(@event.id) %>
+        You're going!
+      <% else %>
+        You're not going!
+      <% end %>
+    <% end %>
+
     <%# TODO move enumerated statuses to Reservation model %>
     <% %w[yes no maybe].each do |status| %>
       <%# TODO come up with sane way of finding users for a particular reservation status %>
