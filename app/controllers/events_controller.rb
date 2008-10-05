@@ -211,6 +211,11 @@ class EventsController < ApplicationController
     end
   end
 
+  def reservation_panel
+    @event = Event.find(params[:id])
+    render :partial => "reservation", :locals => {:event => @event}
+  end
+
 protected
 
   # export events to an iCalendar file

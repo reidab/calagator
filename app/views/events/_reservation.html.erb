@@ -5,7 +5,7 @@ Locals:
 <% status = reservation_status_for(event) %>
 
 <h3>Reservation</h3>
-<div class="event-reservation-status">
+<div id="event-reservation-status">
   <%- if status -%>
     You said you <strong> were
     <%- case status.to_sym -%>
@@ -24,7 +24,7 @@ Locals:
   <% end %>
 </div>
 
-<div class="event-reservation-buttons">
+<div id="event-reservation-buttons">
   <ul>
     <li>
       <%= link_for_reservation("I'm going", event, "yes", status) %>

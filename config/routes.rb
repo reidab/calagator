@@ -29,7 +29,9 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'about', :controller => 'site', :action => 'about'
 
   # Normal controllers
-  map.resources :events, :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post, 'search' => :get}
+  map.resources :events, 
+    :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post, 'search' => :get}, 
+    :member => {'reservation_panel' => :get}
   map.resources :sources, :collection => { :import => :put }
   map.resources :venues, :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post}
   # TODO make create_or_update a POST to protect against spiders walking the app

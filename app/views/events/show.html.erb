@@ -89,3 +89,20 @@
   </div>
 </div>
 </div>
+
+<% insert_javascript %{
+bind_event_reservation_buttons_to_ajax = function() {
+  $('#event-reservation-buttons a').click(function(event) {
+    $e = event;
+    event.preventDefault();
+    clicked_status = $(event.target).attr('xstatus');
+    clicked_event_id = $(event.target).attr('xevent_id');
+    $.get('/reservations/create_or_update', {'status': clicked_status, 'event_id': clicked_event_id});
+    $.get('#{reservation_panel_event_url(@event)}', function(data){
+      $('#event-reservations-panel').html(data);
+      bind_event_reservation_buttons_to_ajax();
+    });
+  });
+}
+bind_event_reservation_buttons_to_ajax();
+}%>

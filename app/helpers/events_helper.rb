@@ -51,13 +51,10 @@ module EventsHelper
   def link_for_reservation(text, event, for_status, current_status)
     link_to(
       text, 
-      url_for(
-        :controller => "reservations", 
-        :action => "create_or_update", 
-        :status => for_status, 
-        :event_id => event.id
-      ), 
-      :class => for_status == current_status ? 'checkmarked' : ''
+      create_or_update_reservations_path(:status => for_status, :event_id => event.id), 
+      :class => for_status == current_status ? 'checkmarked' : '',
+      :xstatus => for_status,
+      :xevent_id => event.id
     )
   end
 end
