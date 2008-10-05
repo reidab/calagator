@@ -69,11 +69,10 @@
       </div>
     </li>
   </ul>
-<hr />
   <div id="event-reservations-panel">
     <%= render :partial => "reservation", :locals => {:event => @event} %>
   </div>
-<hr />
+  <h3>Modify</h3>
   <div id='edit_link'>
     <p>
       You can
@@ -83,7 +82,7 @@
       this event.
     </p>
   </div>
-<hr />
+  <h3>Source</h3>
   <div id='metadata'>
       <%= datestamp(@event) %>
   </div>
