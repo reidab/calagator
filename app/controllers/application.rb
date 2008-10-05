@@ -19,11 +19,18 @@ class ApplicationController < ActionController::Base
 protected
 
   def subnav_content
+    name = \
+      case controller_name
+      when "site", "application"
+        "events"
+      else
+        controller_name
+      end
     return \
       begin
-        render_to_string(:partial => "#{controller_name}/subnav")
+        render_to_string(:partial => "#{name}/subnav")
       rescue
-        "<!-- No subnav for controller: #{controller_name} -->"
+        "<!-- No subnav for controller: #{name} -->"
       end
   end
   helper_method :subnav_content
