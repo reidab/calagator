@@ -71,7 +71,9 @@
   </ul>
 <hr />
   <h3>Reservations</h3>
+    <%# TODO move enumerated statuses to Reservation model %>
     <% %w[yes no maybe].each do |status| %>
+      <%# TODO come up with sane way of finding users for a particular reservation status %>
       <% users = @event.reservations.inject([]){|result, reservation| result << reservation.user if reservation.status == status; result} %>
       <% unless users.blank? %>
         <h4> <%= status.titleize %></h4>
