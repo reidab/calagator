@@ -3,14 +3,14 @@
   <div id="outer">
     <div id="global_header">
       <a href="/" id="project_title">Calagator</a>
-      
+
       <div id="top_menu">
 
           <%
           link_class = {
               # :home =>   (controller.controller_name == 'site' ? 'active first' : 'first'),
               # :import => (controller.controller_name == 'sources' && 'active'),
-              :events => (( controller.controller_name == 'events' || 
+              :events => (( controller.controller_name == 'events' ||
                             controller.controller_name == 'sources' ||
                             controller.controller_name == 'site')  && 'active'),
               :venues => (controller.controller_name == 'venues'  && 'active'),
@@ -39,18 +39,18 @@
             <% end %>
           </div>
         <% end -%>
-      </div>      
+      </div>
     </div>
-    
+
     <% # Pick a subnav %>
-    
+
     <%= render(:partial => 'events/subnav') if link_class[:events] == 'active' %>
     <%= render(:partial => 'venues/subnav') if link_class[:venues] == 'active' %>
     <%= render(:partial => 'sources/subnav') if link_class[:import] == 'active' %>
-  
+
     <div id="user-panel">
       <% if logged_in? %>
-        <%= current_user.label %> 
+        <%= current_user.label %>
         |
         <%= link_to "Logout", logout_url %>
       <% else %>
