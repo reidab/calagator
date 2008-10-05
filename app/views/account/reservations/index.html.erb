@@ -7,15 +7,15 @@
 <ul>
   <% @reservations.each do |reservation| %>
     <li>
-      You <strong>are
+      You <strong>
       <%= 
         case reservation.status.to_sym
         when :yes
-          "going to"
+          "are going to"
         when :no
-          "not going to"
+          "are not going to"
         when :maybe
-          "interested in"
+          "may be going to"
         end
       %>
       </strong>

@@ -4,38 +4,12 @@ Locals:
 %>
 <% status = reservation_status_for(event) %>
 
-<h3>Reserve</h3>
-<div id="event-reservation-status">
-  <%- if status -%>
-    You said you <strong> were
-    <%- case status.to_sym -%>
-    <%- when :yes %>
-      going
-    <%- when :no -%>
-      not going
-    <%- when :maybe -%>
-      interested
-    <%- else -%>
-      <% raise ArgumentError, "Unknown reservation status" %>
-    <%- end -%>
-    </strong>
-  <% else %>
-    Tell the community:
-  <% end %>
-</div>
+<h3>Are you going?</h3>
 
 <div id="event-reservation-buttons">
-  <ul>
-    <li>
-      <%= link_for_reservation("I'm going", event, "yes", status) %>
-    </li>
-    <li>
-      <%= link_for_reservation("I'm interested", event, "maybe", status) %>
-    </li>
-    <li>
-      <%= link_for_reservation("I'm not going", event, "no", status) %>
-    </li>
-  </ul>
+  <%= link_for_reservation("Yes", event, "yes", status) %> /
+  <%= link_for_reservation("Maybe", event, "maybe", status) %> /
+  <%= link_for_reservation("No", event, "no", status) %>
 </div>
 
 <div id="event-reservations-panel-listing-header">
