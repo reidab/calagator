@@ -47,4 +47,17 @@ module EventsHelper
     end_time = event.end_time || event.start_time
     "#{event.start_time.utc.strftime(GOOGLE_TIME_FORMAT)}/#{end_time.utc.strftime(GOOGLE_TIME_FORMAT)}"
   end
+
+  def link_for_reservation(text, event, for_status, current_status)
+    link_to(
+      text, 
+      url_for(
+        :controller => "reservations", 
+        :action => "create_or_update", 
+        :status => for_status, 
+        :event_id => event.id
+      ), 
+      :class => for_status == current_status ? 'checkmarked' : ''
+    )
+  end
 end
