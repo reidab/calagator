@@ -56,7 +56,7 @@
     <% end %>
   </div>
 </div>
-        
+
 <div class='single_view_right sidebar'>
   <h3 class='first'>Export to</h3>
   <ul>
@@ -76,9 +76,9 @@
 <hr />
   <div id='edit_link'>
     <p>
-      You can 
+      You can
       <%= link_to "edit", edit_event_url(@event) %>
-      or 
+      or
       <%= link_to "delete", event_url(@event), :method => :delete, :confirm => "Are you sure?" %>
       this event.
     </p>
@@ -93,10 +93,13 @@
 <% insert_javascript %{
 bind_event_reservation_buttons_to_ajax = function() {
   $('#event-reservation-buttons a').click(function(event) {
-    $e = event;
+    $e = event; // Save event as global for debugging
     event.preventDefault();
-    clicked_status = $(event.target).attr('xstatus');
-    clicked_event_id = $(event.target).attr('xevent_id');
+    target = $(event.target);
+    clicked_status = target.attr('xstatus');
+    clicked_event_id = target.attr('xevent_id');
+    target.removeClass('checkmarked');
+    target.addClass('spinning');
     $.get('/reservations/create_or_update', {'status': clicked_status, 'event_id': clicked_event_id});
     $.get('#{reservation_panel_event_url(@event)}', function(data){
       $('#event-reservations-panel').html(data);
