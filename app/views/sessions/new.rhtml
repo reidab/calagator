@@ -1,9 +1,16 @@
-<% form_tag session_path do -%>
-<p><label for="login">OpenID URL</label><br/>
-<%= text_field_tag 'openid_url' %></p>
+<% form_tag(session_path, :id => "login-form") do -%>
+  <p>
+    <label for="login">OpenID URL</label>
+    <br/>
+    <%= text_field_tag 'openid_url' %>
+  </p>
 
-<p><label for="remember_me">Remember me:</label>
-<%= check_box_tag 'remember_me' %></p>
+  <p>
+    <label for="remember_me">Remember me:</label>
+    <%= check_box_tag 'remember_me' %>
+  </p>
 
-<p><%= submit_tag 'Log in' %></p>
+  <p>
+    <%= submit_tag 'Log in' %>
+  </p>
 <% end -%>

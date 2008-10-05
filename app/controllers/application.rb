@@ -15,6 +15,18 @@ class ApplicationController < ActionController::Base
 
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
+
+protected
+
+  def subnav_content
+    return \
+      begin
+        render_to_string(:partial => "#{controller_name}/subnav")
+      rescue
+        "<!-- No subnav for controller: #{controller_name} -->"
+      end
+  end
+  helper_method :subnav_content
 end
 
 # Make it possible to use helpers in controllers
