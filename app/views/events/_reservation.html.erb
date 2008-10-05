@@ -3,11 +3,20 @@ Locals:
 * event: The event to display reservations for
 %>
 <% if logged_in? %>
-  <% if current_user.reservations.find_by_event_id(event.id) %>
-      You're going!
+  Are you going?
+  <% reservation = current_user.reservations.find_by_event_id(event.id) %>
+  <% if reservation %>
+    <%= reservation.status %>
   <% else %>
-      You're not going!
+    No reservation found 
   <% end %>
+
+  <br />
+
+  <b>Change</b>
+  <%= link_to("Yes", url_for(:controller => "reservations", :action => "create_or_update", :status => "yes", :event_id => event.id)) %>
+  <%= link_to("No", url_for(:controller => "reservations", :action => "create_or_update", :status => "no", :event_id => event.id)) %>
+  <%= link_to("Maybe", url_for(:controller => "reservations", :action => "create_or_update", :status => "maybe", :event_id => event.id)) %>
 <% end %>
 
 <%# TODO move enumerated statuses to Reservation model %>

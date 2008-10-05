@@ -1,6 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :reservations
-
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
@@ -34,6 +32,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :events, :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post, 'search' => :get}
   map.resources :sources, :collection => { :import => :put }
   map.resources :venues, :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post}
+  # TODO make create_or_update a POST to protect against spiders walking the app
+  map.resources :reservations, :collection => {"create_or_update" => :get}
+
   # Export action
   map.connect 'export', :controller => 'site', :action => 'export'
   map.connect 'export.:format', :controller => 'site', :action => 'export'

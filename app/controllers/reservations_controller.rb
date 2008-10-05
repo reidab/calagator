@@ -82,4 +82,18 @@ class ReservationsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  def create_or_update
+    if reservation = current_user.reservations.find_by_event_id(params[:event_id])
+      # Update
+      reservation.update_attribute(:status, params[:status])
+    else
+      # Create
+      current_user.reservations.create!(:status => params[:status], :event_id => params[:event_id])
+    end
+
+    unless request.xhr?
+      redirect_to(event_url(params[:event_id]))
+    end
+  end
 end
