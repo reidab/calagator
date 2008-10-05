@@ -85,11 +85,7 @@ class User < ActiveRecord::Base
   end
 
   def label
-    if using_openid?
-      URI.parse(login).host
-    else
-      login
-    end
+    return(self.fullname || self.login || URI.parse(login).host)
   end
 
 protected
