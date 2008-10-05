@@ -147,4 +147,8 @@ module ApplicationHelper
   def cleanse(string)
     return h(HTMLEntitiesCoder.decode(string))
   end
+
+  def reservation_status_for(event)
+    return logged_in? ? current_user.reservations.find_by_event_id(event.id).ergo.status : nil
+  end
 end
