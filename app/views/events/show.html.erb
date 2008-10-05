@@ -71,30 +71,7 @@
   </ul>
 <hr />
   <h3>Reservations</h3>
-    <% if logged_in? %>
-      <% if current_user.reservations.find_by_event_id(@event.id) %>
-        You're going!
-      <% else %>
-        You're not going!
-      <% end %>
-    <% end %>
-
-    <%# TODO move enumerated statuses to Reservation model %>
-    <% %w[yes no maybe].each do |status| %>
-      <%# TODO come up with sane way of finding users for a particular reservation status %>
-      <% users = @event.reservations.inject([]){|result, reservation| result << reservation.user if reservation.status == status; result} %>
-      <% unless users.blank? %>
-        <h4> <%= status.titleize %></h4>
-        <ul>
-          <% users.each do |user| %>
-            <li>
-              <%= user.label %>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
-    <% end %>
-  </ul>
+  <%= render :partial => "reservation", :locals => {:event => @event} %>
 <hr />
   <div id='edit_link'>
     <p>
