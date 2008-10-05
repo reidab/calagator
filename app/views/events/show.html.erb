@@ -90,7 +90,7 @@
 </div>
 </div>
 
-<% insert_javascript %{
+<% if logged_in?; insert_javascript %{
 bind_event_reservation_buttons_to_ajax = function() {
   $('#event-reservation-buttons a').click(function(event) {
     $e = event; // Save event as global for debugging
@@ -108,4 +108,4 @@ bind_event_reservation_buttons_to_ajax = function() {
   });
 }
 bind_event_reservation_buttons_to_ajax();
-}%>
+}; end %>
