@@ -70,6 +70,22 @@
     </li>
   </ul>
 <hr />
+  <h3>Reservations</h3>
+    <% %w[yes no maybe].each do |status| %>
+      <% users = @event.reservations.inject([]){|result, reservation| result << reservation.user if reservation.status == status; result} %>
+      <% unless users.blank? %>
+        <h4> <%= status.titleize %></h4>
+        <ul>
+          <% users.each do |user| %>
+            <li>
+              <%= user.label %>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    <% end %>
+  </ul>
+<hr />
   <div id='edit_link'>
     <p>
       You can 

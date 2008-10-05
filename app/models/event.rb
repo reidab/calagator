@@ -44,6 +44,8 @@ class Event < ActiveRecord::Base
   # Associations
   belongs_to :venue
   belongs_to :source
+  #IK# has_and_belongs_to_many :users, :join_table => :reservations
+  has_many :reservations
 
   # Triggers
   before_validation :normalize_url!
