@@ -1,4 +1,10 @@
 class ReservationsController < ApplicationController
+  # TODO Should anyone ever be allowed to manipulate anyone else's
+  # reservations? If not, remove all these unnecessary actions.
+  before_filter :bounce_to_root_url, :except => [:create_or_update]
+
+  before_filter :login_required, :only => [:create_or_update]
+
   # GET /reservations
   # GET /reservations.xml
   def index
@@ -96,4 +102,12 @@ class ReservationsController < ApplicationController
       redirect_to(event_url(params[:event_id]))
     end
   end
+
+protected
+
+  def bounce_to_root_url
+    flash[:failure] = "Access forbidden to /reservations"
+    redirect_to root_url
+  end
+
 end
