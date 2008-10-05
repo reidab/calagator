@@ -70,8 +70,9 @@
     </li>
   </ul>
 <hr />
-  <h3>Reservations</h3>
-  <%= render :partial => "reservation", :locals => {:event => @event} %>
+  <div id="event-reservations-panel">
+    <%= render :partial => "reservation", :locals => {:event => @event} %>
+  </div>
 <hr />
   <div id='edit_link'>
     <p>
