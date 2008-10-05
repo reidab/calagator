@@ -50,9 +50,11 @@
         <% if logged_in? %>
           <%= current_user.label %>
           :
-          <%= link_to "Logout", logout_url %>
+          <%= link_to "Reservations", account_reservations_path %>
+          /
+          <%= link_to "Logout", logout_path %>
         <% else %>
-          <%= link_to "Login", login_url %>
+          <%= link_to "Login", login_path %>
         <% end %>
       </div>
     </div>

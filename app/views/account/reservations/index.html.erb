@@ -1,0 +1,29 @@
+<h1>Your reservations</h1>
+<% if @reservations.blank? %>
+  <p>
+    &mdash; You have no reservations &mdash;
+  </p>
+<% else %>
+<ul>
+  <% @reservations.each do |reservation| %>
+    <li>
+      You <strong>are
+      <%= 
+        case reservation.status.to_sym
+        when :yes
+          "going to"
+        when :no
+          "not going to"
+        when :maybe
+          "interested in"
+        end
+      %>
+      </strong>
+      <%= link_to cleanse(reservation.event.title), event_path(reservation.event) %> 
+      on
+      <br />
+      <%= normalize_time(reservation.event) %> 
+    </li>
+  <% end %>
+</ul>
+<% end %>

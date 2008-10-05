@@ -36,6 +36,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :venues, :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post}
   # TODO make create_or_update a POST to protect against spiders walking the app
   map.resources :reservations, :collection => {"create_or_update" => :get}
+  map.resource :account do |account|
+    account.resources :reservations, :controller => "account/reservations"
+  end
 
   # Export action
   map.connect 'export', :controller => 'site', :action => 'export'
