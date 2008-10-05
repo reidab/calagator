@@ -4,7 +4,7 @@ class Reservation < ActiveRecord::Base
   belongs_to :event
 
   # Allowed status values
-  STATUSES = %w[yes no maybe].map(&:to_s)
+  STATUSES = %w[yes no maybe]
 
   # Validations
   validates_inclusion_of :status, :in => STATUSES
