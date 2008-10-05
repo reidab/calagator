@@ -99,10 +99,11 @@ bind_event_reservation_buttons_to_ajax = function() {
     clicked_event_id = target.attr('xevent_id');
     target.removeClass('checkmarked');
     target.addClass('spinning');
-    $.get('/reservations/create_or_update', {'status': clicked_status, 'event_id': clicked_event_id});
-    $.get('#{reservation_panel_event_url(@event)}', function(data){
-      $('#event-reservations-panel').html(data);
-      bind_event_reservation_buttons_to_ajax();
+    $.get('/reservations/create_or_update', {'status': clicked_status, 'event_id': clicked_event_id}, function(data) {
+      $.get('#{reservation_panel_event_url(@event)}', function(data){
+        $('#event-reservations-panel').html(data);
+        bind_event_reservation_buttons_to_ajax();
+      });
     });
   });
 }
