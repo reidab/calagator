@@ -88,7 +88,7 @@ private
   end
 
   def failed_login(message)
-    flash[:error] = message
+    flash[:failure] = message
     redirect_to(params[:login_type] == "admin" ? admin_url : login_url)
   end
 
