@@ -15,8 +15,14 @@ class SourcesController < ApplicationController
         @sources_to_events = Source.create_sources_and_events_for!(@source.url)
         @source = @sources_to_events.keys.first
         @events = @sources_to_events.values.flatten
-      rescue OpenURI::HTTPError
-        @source.errors.add_to_base("that URL doesn't seem to be working")
+      rescue SourceParser::HttpAuthenticationRequiredError => e
+        @source.errors.add_to_base("source requires authentication")
+      rescue OpenURI::HTTPError => e
+        @source.errors.add_to_base("we received an error from this source")
+      rescue Errno::EHOSTUNREACH => e
+        @source.errors.add_to_base("this source is not responding")
+      rescue SocketError => e
+        @source.errors.add_to_base("hostname not found")
       end
     end
 
@@ -62,7 +68,12 @@ class SourcesController < ApplicationController
   # GET /sources/1
   # GET /sources/1.xml
   def show
-    @source = Source.find(params[:id])
+    begin
+      @source = Source.find(params[:id])
+    rescue ActiveRecord::RecordNotFound => e
+      flash[:failure] = e.to_s if params[:id] != "import"
+      return redirect_to(:action => :new)
+    end
 
     respond_to do |format|
       format.html # show.html.erb

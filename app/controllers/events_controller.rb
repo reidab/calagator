@@ -210,6 +210,12 @@ class EventsController < ApplicationController
       format.ics { ical_export(@events) }
     end
   end
+  
+  def refresh_version
+    @event = Event.find(params[:id])
+    @event.revert_to(params[:version])
+    render :partial => 'form', :locals => { :event => @event}
+  end
 
   def reservation_panel
     @event = Event.find(params[:id])

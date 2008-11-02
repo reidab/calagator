@@ -399,27 +399,27 @@ describe Event do
   end
 
   describe "with finding duplicates" do
-  it "should find all events with duplicate titles" do
-    Event.should_receive(:find_by_sql).with("SELECT DISTINCT a.* from events a, events b WHERE a.id <> b.id AND ( a.title = b.title ) ORDER BY a.title")
-    Event.find(:duplicates, :by => :title )
-  end
+    it "should find all events with duplicate titles" do
+      Event.should_receive(:find_by_sql).with("SELECT DISTINCT a.* from events a, events b WHERE a.id <> b.id AND ( a.title = b.title ) ORDER BY a.title")
+      Event.find(:duplicates, :by => :title )
+    end
 
-  it "should find all events with duplicate titles and urls" do
-    Event.should_receive(:find_by_sql).with("SELECT DISTINCT a.* from events a, events b WHERE a.id <> b.id AND ( a.title = b.title AND a.url = b.url ) ORDER BY a.title,a.url")
-    Event.find(:duplicates, :by => [:title,:url])
-  end
+    it "should find all events with duplicate titles and urls" do
+      Event.should_receive(:find_by_sql).with("SELECT DISTINCT a.* from events a, events b WHERE a.id <> b.id AND ( a.title = b.title AND a.url = b.url ) ORDER BY a.title,a.url")
+      Event.find(:duplicates, :by => [:title,:url])
+    end
 
-  it "should find all events that have not been marked as duplicate" do
-    Event.should_receive(:find_without_duplicate_support).with(:all, {})
-    Event.find(:non_duplicates)
-  end
+    it "should find all events that have not been marked as duplicate" do
+      Event.should_receive(:find_without_duplicate_support).with(:all, {})
+      Event.find(:non_duplicates)
+    end
 
-  it "should find all events that have been marked as duplicate" do
-    Event.should_receive(:find_without_duplicate_support).with(:all, {})
-    Event.find(:marked_duplicates)
-  end
+    it "should find all events that have been marked as duplicate" do
+      Event.should_receive(:find_without_duplicate_support).with(:all, {})
+      Event.find(:marked_duplicates)
+    end
 
-end
+  end
 
   describe "with finding duplicates (integration test)" do
     fixtures :events
@@ -550,4 +550,41 @@ end
     end
 
   end
+
+  describe "acting as versioned" do
+    it "should have versions" do
+      Event.new.versions.should==[]
+    end
+    
+    it "should increment the version number when editing" do
+      event = Event.create!(:title => "Event title", :start_time => Time.parse('2008.04.12'))
+      event.version.should==1
+      
+      event.title = "New Title"
+      event.save!
+      event.version.should==2
+    end
+  end
+
+  describe "when normalizing line-endings in the description" do
+    before(:each) do
+      @event = Event.new
+    end
+
+    it "should not molest contents without carriage-returns" do
+      @event.description         = "foo\nbar"
+      @event.description.should == "foo\nbar"
+    end
+
+    it "should replace CRLF with LF" do
+      @event.description         = "foo\r\nbar"
+      @event.description.should == "foo\nbar"
+    end
+
+    it "should replace stand-alone CR with LF" do
+      @event.description         = "foo\rbar"
+      @event.description.should == "foo\nbar"
+    end
+  end
+
 end

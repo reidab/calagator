@@ -71,10 +71,29 @@ class SourceParser
     def self.read_url(url)
       uri = URI.parse(url)
       if uri.respond_to?(:read)
-        return uri.read
+        if ['http', 'https'].include?(uri.scheme)
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = (uri.scheme == 'https')
+          path_and_query = uri.path.blank? ? "/" : uri.path
+          path_and_query += "?#{uri.query}" if uri.query
+          request = Net::HTTP::Get.new(path_and_query)
+          request.basic_auth(uri.user, uri.password)
+          response = SourceParser::Base::http_response_for(http, request)
+          if response.code == "401"
+            raise SourceParser::HttpAuthenticationRequiredError.new
+          end
+          return response.body
+        else
+          return uri.read
+        end
       else
         return open(url){|h| h.read}
       end
+    end
+
+    # Return the HTTPResponse for the +http+ connection and the +request+.
+    def self.http_response_for(http, request)
+      return http.request(request)
     end
 
     # Stub which makes sure that subclasses of Base implement the #parse method.

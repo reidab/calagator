@@ -40,6 +40,8 @@ class Event < ActiveRecord::Base
   unless RAILS_ENV == 'test'
     acts_as_solr :fields => INDEXABLE_FIELDS
   end
+  
+  acts_as_versioned
 
   # Associations
   belongs_to :venue
@@ -58,9 +60,14 @@ class Event < ActiveRecord::Base
     :allow_blank => true,
     :allow_nil => true
 
+  include ValidatesBlacklistOnMixin
+  validates_blacklist_on :title, :description, :url
+
+  include VersionDiff
+
   # Duplicates
   include DuplicateChecking
-  duplicate_checking_ignores_attributes    :source_id
+  duplicate_checking_ignores_attributes    :source_id, :version
   duplicate_squashing_ignores_associations :tags
 
   # Named scopes
@@ -74,6 +81,12 @@ class Event < ActiveRecord::Base
   def title
     # TODO Generalize this code so we can use it on other attributes in the different model classes. The solution should use an #alias_method_chain to make sure it's not breaking any explicit overrides for an attribute.
     return read_attribute(:title).ergo.strip
+  end
+
+  # Return description without those pesky carriage-returns.
+  def description
+    # TODO Generalize this code so we can reuse it on other attributes.
+    return read_attribute(:description).ergo{self.gsub("\r\n", "\n").gsub("\r", "\n")}
   end
 
   #---[ Queries ]---------------------------------------------------------

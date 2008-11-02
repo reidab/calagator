@@ -333,10 +333,13 @@ fieldset label {
   clear: left;
 }
 
-fieldset > div {
+fieldset > div, #form-contents > div {
   clear: both;
   padding-top: 1em;
-  
+}
+
+#form-contents {
+  clear: none;
 }
 
 label.checkbox {
@@ -348,18 +351,9 @@ fieldset input {
   float: left;
 }
 
-fieldset .date_picker {
-  float: left;
-  margin-right: 2em;
-}
-
 fieldset .calendar_date_select {
   border: 0;
   width: 25em;
-}
-
-fieldset .date_picker label {
-  text-align: left;
 }
 
 fieldset .no_label, fieldset .help {

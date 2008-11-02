@@ -1,8 +1,24 @@
+<% content_for :css_insert do %>
+  <%= stylesheet_link_tag \
+    "datepicker",
+    "timePicker"
+  %>
+<% end %>
+
 <% content_for :javascript_insert do %>
-  <%= javascript_include_tag 'jquery.dimensions.min.js', 'jquery.ui.autocomplete.ext.js', 'jquery.ui.autocomplete.js' %>
+  <%= javascript_include_tag \
+    'jquery.dimensions.min.js',
+    'jquery.ui.autocomplete.ext.js',
+    'jquery.ui.autocomplete.js',
+    'date-functions.js',
+    'ui.datepicker.js',
+    'jquery.timePicker.js'
+  %>
   <script>
     var completed_title = '';
     $(document).ready(function(){
+      
+      // Initialize autocompletion for venues
       $("input.autocomplete").autocomplete({
         ajax: "/venues.js",
         timeout: 200,
@@ -34,17 +50,25 @@
         $("#event_venue_loading").hide();
       })
       .attr('autocomplete', 'off');
+      
+      // Initialize date and time pickers
+      $('.date_picker').datepicker({ dateFormat: 'yy-mm-dd' });
+      $('.time_picker').timePicker({
+        show24Hours:false,
+        separator:':',
+        step: 30});
     });
+    
   </script>
 <% end %>
 
-<% form_for(@event, :html => {:id => "event_form", :class => "standard_form"}) do |f| %>
-<fieldset>
-  <legend><%= @event.new_record? ? "Add an Event" : "Editing: <em>#{@event.title}</em>" %></legend>
-  <p>You can <%= @event.new_record? ? "enter" : "edit" %> the details of your event below.  The more information we have about your event, the easier it will be for people to find it.</p>
+<% form_for(event, :html => {:id => "event_form", :class => "standard_form"}) do |f| %>
+  <fieldset>
+    <legend><% unless event.new_record? %>Editing: <em><%= event.title %></em><% end %></legend>
+    
+    <p>You can edit the details of your event below.  The more information we have about your event, the easier it will be for people to find it.</p>
 
   <%= error_messages_for :event %>
-
   <div>
     <%= f.label :title, "Event Name" %>
     <%= f.text_field :title %>
@@ -52,8 +76,8 @@
   </div>
   <div>
     <%= f.label :venue_id, "Venue" %>
-    <%= text_field_tag 'venue_name', '', :class=> 'autocomplete', :value => !@event.venue.nil? ? @event.venue.title : params[:venue_name] %>
-    <%= hidden_field(:event, :venue_id, :value => (!@event.venue.nil? ? @event.venue.id : params[:event_venue_id])) %>
+    <%= text_field_tag 'venue_name', '', :class=> 'autocomplete', :value => !event.venue.nil? ? event.venue.title : params[:venue_name] %>
+    <%= hidden_field(:event, :venue_id, :value => (!event.venue.nil? ? event.venue.id : params[:event_venue_id])) %>
     <%= image_tag "spinner.gif", :id=> "event_venue_loading", :style => "display: none; margin-left: 0.5em;" %>
   </div>
   <div class='help'>
@@ -61,16 +85,20 @@
   </div>
 
   <div id="event_times">
-    <div id="start_time">
-      <%= f.label :start_time %>
-      <%= text_field_tag 'start_date', @event.start_time ? @event.start_time.to_date : '', :id => 'date_start', :class => 'date_picker' %>
-      <%= text_field_tag 'start_time', @event.start_time ? @event.start_time.strftime('%I:%M %p') : '', :id => 'time_start', :class => 'time_picker' %>
-    </div>
-    <div id="end_time">
-      <%= f.label :end_time %>
-      <%= text_field_tag 'end_date', @event.end_time ? @event.end_time.to_date : '', :id => 'date_end', :class => 'date_picker' %>
-      <%= text_field_tag 'end_time', @event.end_time ? @event.end_time.strftime('%I:%M %p') : '', :id => 'time_end', :class => 'time_picker' %>
-    </div>
+    <%= f.label :when, "When" %>
+    <% 
+      present = Time.now 
+      if event.new_record?
+        # Provide an initial default value for the start_time and end_time that's rounded to the upcoming hour.
+        event.start_time ||= present + (60.minutes - present.min.minutes) - present.sec
+        event.end_time   ||= present + (60.minutes - present.min.minutes) - present.sec + 1.hour
+      end
+    %>
+      <%= text_field_tag 'start_date', event.start_time ? event.start_time.to_date : present.to_date, :id => 'date_start', :class => 'date_picker' %>
+      <%= text_field_tag 'start_time', event.start_time.strftime('%I:%M %p'), :id => 'time_start', :class => 'time_picker' %>
+      <span>to</span>
+      <%= text_field_tag 'end_time', event.end_time.ergo.strftime('%I:%M %p'), :id => 'time_end', :class => 'time_picker' %>
+      <%= text_field_tag 'end_date', event.end_time ? event.end_time.to_date : Time.now.to_date, :id => 'date_end', :class => 'date_picker' %>
   </div>
   <div>
     <%= f.label :url, "Website" %>
@@ -97,6 +125,6 @@
     <%= label 'trap', 'field', "Leave this field blank or we'll think you're a robot." %>
     <%= text_field_tag 'trap_field', params[:trap_field] %>
   </div>
-  <div class='no_label'><%= f.submit(@event.new_record? ? "Create" : "Update") %></div>
-</fieldset>
+  <div class='no_label'><%= f.submit(event.new_record? ? "Create" : "Update") %></div>
+  </fieldset>
 <% end %>
