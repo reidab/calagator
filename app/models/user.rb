@@ -94,6 +94,23 @@ class User < ActiveRecord::Base
     return self.my_events.find_by_event_id(event_id)
   end
 
+  # Return data structure that's a hash of MyEvent statuses to arrays of events this user listed as interesting. E.g.,
+  #
+  #   {
+  #     "yes" => [<Event1>, <Event2>, ...],
+  #     "no"  => [<Event3>, ...],
+  #     ...
+  #   }
+  def my_events_by_status
+    return self.my_events.inject({}){|result, my_event| result[my_event.status] ||= []; result[my_event.status] << my_event.event; result}
+  end
+
+  # Is the user interested in this event?
+  def interested_in?(event)
+    event_id = event.kind_of?(Event) ? event.id : event
+    return self.my_events.count(:conditions => ['event_id = ? and status in (?)', event_id, MyEvent::INTERESTING_STATUSES]) > 0
+  end
+
 protected
 
   def encrypt_password
