@@ -3,14 +3,14 @@
   <div id="outer">
     <div id="global_header">
       <a href="/" id="project_title">Calagator</a>
-      
+
       <div id="top_menu">
 
           <%
           link_class = {
               # :home =>   (controller.controller_name == 'site' ? 'active first' : 'first'),
               # :import => (controller.controller_name == 'sources' && 'active'),
-              :events => (( controller.controller_name == 'events' || 
+              :events => (( controller.controller_name == 'events' ||
                             controller.controller_name == 'sources' ||
                             controller.controller_name == 'site')  && 'active'),
               :venues => (controller.controller_name == 'venues'  && 'active'),
@@ -39,16 +39,26 @@
             <% end %>
           </div>
         <% end -%>
-      </div>      
+      </div>
     </div>
-    
-    <% # Pick a subnav %>
-    
-    <%= render(:partial => 'events/subnav') if link_class[:events] == 'active' %>
-    <%= render(:partial => 'venues/subnav') if link_class[:venues] == 'active' %>
-    <%= render(:partial => 'sources/subnav') if link_class[:import] == 'active' %>
-  
-  
+
+    <div class="subnav">
+      <div id="<%= controller.controller_name %>_subnav">
+        <%= subnav_content %>
+      </div>
+      <div id="user-panel">
+        <% if logged_in? %>
+          <%= current_user.label %>
+          :
+          <%= link_to "My events", account_my_events_path %>
+          /
+          <%= link_to "Logout", logout_path %>
+        <% else %>
+          <%= link_to "Login", login_path %>
+        <% end %>
+      </div>
+    </div>
+
     <div id="content">
       <%# flash[:success] = "yay"; flash[:failure] = "meh" %>
       <%= render_flash %>

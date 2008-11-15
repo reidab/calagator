@@ -100,6 +100,10 @@ body {
   background: url('/images/subnav_marker.gif') no-repeat center bottom;
 }
 
+.subnav #user-panel {
+  float: right;
+  padding-right: 2em;
+}
 
 
 #content {
@@ -405,6 +409,32 @@ fieldset .help {
 }
 
 .hidden {
+  display: none;
+}
+
+.spinning {
+  display: inline-block;
+  padding-left: 20px;
+	background: url('/images/spinner.gif') left center no-repeat;
+}
+
+.checkmarked {
+  display: inline-block;
+  padding-left: 20px;
+	background: url('/images/checkmark.png') left center no-repeat;
+}
+
+/* @group My Events Panel
+----------------------------------------*/
+
+#event_my_events_panel_listing_hidden {
+}
+
+#event_my_events_panel_listing_shown {
+  display: none;
+}
+
+#event_my_events_panel_listing {
   display: none;
 }
 

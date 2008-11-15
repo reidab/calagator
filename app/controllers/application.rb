@@ -12,6 +12,28 @@ class ApplicationController < ActionController::Base
 
   # For vendor/plugins/exception_notification
   include ExceptionNotifiable
+
+  # Be sure to include AuthenticationSystem in Application Controller instead
+  include AuthenticatedSystem
+
+protected
+
+  def subnav_content
+    name = \
+      case controller_name
+      when "site", "application"
+        "events"
+      else
+        controller_name
+      end
+    return \
+      begin
+        render_to_string(:partial => "#{name}/subnav")
+      rescue
+        "<!-- No subnav for controller: #{name} -->"
+      end
+  end
+  helper_method :subnav_content
 end
 
 # Make it possible to use helpers in controllers

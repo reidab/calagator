@@ -96,9 +96,9 @@ module ApplicationHelper
     else
       stamp << "imported from " << link_to(truncate(item.source.name, 40), item.source.name)
     end
-    stamp << " <br />" << content_tag(:strong, normalize_time(item.created_at, :format => :html) )
+    stamp << " on " << content_tag(:em, normalize_time(item.created_at, :format => :html) )
     if item.updated_at > item.created_at
-      stamp << " and last updated <br />" << content_tag(:strong, normalize_time(item.updated_at, :format => :html) )
+      stamp << " and last updated " << content_tag(:strong, normalize_time(item.updated_at, :format => :html) )
     end
     stamp << "."
   end
@@ -146,5 +146,10 @@ module ApplicationHelper
   # Returns a string with safely encoded entities thanks to #h, while preserving any existing HTML entities.
   def cleanse(string)
     return h(HTMLEntitiesCoder.decode(string))
+  end
+
+  # Return the MyEvent instance for the currently-logged in user for this event, or nil if not logged in or there's no association.
+  def my_event_for(event)
+    return logged_in? ? current_user.my_event_for(event) : nil
   end
 end

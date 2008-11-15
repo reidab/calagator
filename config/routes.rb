@@ -1,5 +1,4 @@
 ActionController::Routing::Routes.draw do |map|
-
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
@@ -33,9 +32,15 @@ ActionController::Routing::Routes.draw do |map|
   map.formatted_recent_changes 'recent_changes.:format', :controller => 'site', :action => 'recent_changes'
 
   # Normal controllers
-  map.resources :events, :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post, 'search' => :get}
+  map.resources :events, 
+    :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post, 'search' => :get}, 
+    :member => {'my_events_panel' => :get}
   map.resources :sources, :collection => { :import => :put }
   map.resources :venues, :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post}
+  map.resource :account do |account|
+    # TODO change #create_or_update to a POST
+    account.resources :my_events, :controller => "accounts/my_events", :collection => {"create_or_update" => :get}
+  end
 
   # Export action
   map.connect 'export', :controller => 'site', :action => 'export'
@@ -44,6 +49,14 @@ ActionController::Routing::Routes.draw do |map|
   # Stylesheets
   map.connect 'css/:name', :controller => 'site', :action => 'style'
   map.connect 'css/:name.:format', :controller => 'site', :action => 'style'
+
+  # Authentication
+  map.resources :users
+  map.resource  :session, :collection => ["admin"]
+  map.open_id_complete 'session', :controller => "sessions", :action => "create", :requirements => { :method => :get }
+  map.login            '/login',  :controller => 'sessions', :action => 'new'
+  map.logout           '/logout', :controller => 'sessions', :action => 'destroy'
+  map.admin            '/admin',  :controller => 'sessions', :action => 'admin'
 
   # Site root
   map.root :controller => "site"

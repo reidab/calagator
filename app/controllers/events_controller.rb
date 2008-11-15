@@ -1,5 +1,6 @@
 class EventsController < ApplicationController
   include SquashManyDuplicatesMixin # Provides squash_many_duplicates
+  before_filter :login_required, :only => [:my_events_panel]
 
   # GET /events
   # GET /events.xml
@@ -215,6 +216,13 @@ class EventsController < ApplicationController
     @event = Event.find(params[:id])
     @event.revert_to(params[:version])
     render :partial => 'form', :locals => { :event => @event}
+  end
+
+  def my_events_panel
+    @event = Event.find(params[:id])
+    # Filter ensures that user is logged in to access this
+    @my_event = current_user.my_event_for(@event)
+    render :partial => "my_events_panel", :locals => {:event => @event, :my_event => @my_event}
   end
 
 protected
