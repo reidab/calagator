@@ -4,25 +4,40 @@ Locals:
 * my_event : The current_user's my_event instance, or nil if not logged in or not present
 %>
 
+<% users_by_status = event.my_event_users_by_status %>
+
 <h3>Are you going?</h3>
 
 <div id="event_my_event_buttons">
-  <%# TODO generalize using loop over MyEvent::STATUSES %>
-  <%= link_for_my_event("Yes", event, "yes", my_event.ergo.status) %> /
-  <%= link_for_my_event("Maybe", event, "maybe", my_event.ergo.status) %> /
-  <%= link_for_my_event("No", event, "no", my_event.ergo.status) %>
+  <% is_initial_status = true %>
+  <% MyEvent::STATUSES.each do |status| %>
+    <%- if is_initial_status -%>
+      <%- is_initial_status = false -%>
+    <%- else -%>
+      /
+    <%- end -%>
+    <%= link_for_my_event(
+      MyEvent.status_label_for(status),
+      event,
+      status,
+      my_event.ergo.status) -%>
+  <% end %>
 </div>
 
-<div id="event_my_events_panel_listing_header">
+<div id="event_my_events_panel_listing_summary">
   Total:
-  <%# TODO generalize using loop over MyEvent::STATUSES %>
-  <%# TODO use more efficient counting %>
-  <strong><%= event.my_events.select{|t| t.status == "yes"}.size %> yes</strong> /
-  <strong><%= event.my_events.select{|t| t.status == "maybe"}.size %> maybe</strong> /
-  <strong><%= event.my_events.select{|t| t.status == "no"}.size %> no</strong>
+  <% is_initial_status = true %>
+  <% MyEvent::STATUSES.each do |status| %>
+    <%- if is_initial_status -%>
+      <%- is_initial_status = false -%>
+    <%- else -%>
+      /
+    <%- end -%>
+    <strong><%= users_by_status[status].ergo.size || 0 %> <%= MyEvent.status_label_for(status) %></strong>
+  <% end %>
 
   <div id="event_my_events_panel_listing_hidden">
-    <%= link_to_function("Show details...", %{
+    <%= link_to_function("Details...", %{
       $('#event_my_events_panel_listing_hidden').hide();
       $('#event_my_events_panel_listing_shown').show();
       $('#event_my_events_panel_listing').show();
@@ -37,7 +52,6 @@ Locals:
   </div>
 </div>
 <div id="event_my_events_panel_listing">
-  <% users_by_status = event.my_event_users_by_status %>
   <% MyEvent::STATUSES.each do |status| %>
     <% users = users_by_status[status] %>
     <% unless users.blank? %>
