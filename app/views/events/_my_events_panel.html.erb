@@ -1,0 +1,54 @@
+<%#
+Locals:
+* event: The event to display my_events for
+* my_event : The current_user's my_event instance, or nil if not logged in or not present
+%>
+
+<h3>Are you going?</h3>
+
+<div id="event_my_event_buttons">
+  <%# TODO generalize using loop over MyEvent::STATUSES %>
+  <%= link_for_my_event("Yes", event, "yes", my_event.ergo.status) %> /
+  <%= link_for_my_event("Maybe", event, "maybe", my_event.ergo.status) %> /
+  <%= link_for_my_event("No", event, "no", my_event.ergo.status) %>
+</div>
+
+<div id="event_my_events_panel_listing_header">
+  Total:
+  <%# TODO generalize using loop over MyEvent::STATUSES %>
+  <%# TODO use more efficient counting %>
+  <strong><%= event.my_events.select{|t| t.status == "yes"}.size %> yes</strong> /
+  <strong><%= event.my_events.select{|t| t.status == "maybe"}.size %> maybe</strong> /
+  <strong><%= event.my_events.select{|t| t.status == "no"}.size %> no</strong>
+
+  <div id="event_my_events_panel_listing_hidden">
+    <%= link_to_function("Show details...", %{
+      $('#event_my_events_panel_listing_hidden').hide();
+      $('#event_my_events_panel_listing_shown').show();
+      $('#event_my_events_panel_listing').show();
+    }) %>
+  </div>
+  <div id="event_my_events_panel_listing_shown">
+    <%= link_to_function("Hide details...", %{
+      $('#event_my_events_panel_listing_shown').hide();
+      $('#event_my_events_panel_listing_hidden').show();
+      $('#event_my_events_panel_listing').hide();
+    }) %>
+  </div>
+</div>
+<div id="event_my_events_panel_listing">
+  <% users_by_status = event.my_event_users_by_status %>
+  <% MyEvent::STATUSES.each do |status| %>
+    <% users = users_by_status[status] %>
+    <% unless users.blank? %>
+      <h4> <%= status.titleize %></h4>
+      <ul>
+        <% users.each do |user| %>
+          <li>
+            <%= user.label %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+</div>

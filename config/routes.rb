@@ -34,13 +34,12 @@ ActionController::Routing::Routes.draw do |map|
   # Normal controllers
   map.resources :events, 
     :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post, 'search' => :get}, 
-    :member => {'reservation_panel' => :get}
+    :member => {'my_events_panel' => :get}
   map.resources :sources, :collection => { :import => :put }
   map.resources :venues, :collection => {'duplicates' => :get, 'squash_multiple_duplicates' => :post}
-  # TODO make create_or_update a POST to protect against spiders walking the app
-  map.resources :reservations, :collection => {"create_or_update" => :get}
   map.resource :account do |account|
-    account.resources :reservations, :controller => "account/reservations"
+    # TODO change #create_or_update to a POST
+    account.resources :my_events, :controller => "accounts/my_events", :collection => {"create_or_update" => :get}
   end
 
   # Export action

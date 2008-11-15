@@ -46,8 +46,7 @@ class Event < ActiveRecord::Base
   # Associations
   belongs_to :venue
   belongs_to :source
-  #IK# has_and_belongs_to_many :users, :join_table => :reservations
-  has_many :reservations
+  has_many :my_events
 
   # Triggers
   before_validation :normalize_url!
@@ -210,6 +209,18 @@ class Event < ActiveRecord::Base
         :grouped => true,
         :where => "a.start_time >= #{self.connection.quote(Time.now - 1.day)}")
     end
+  end
+
+  # Returns data structure that's a hash of MyEvent statuses to arrays of users
+  # with that status. E.g.,
+  #
+  #   {
+  #     "yes" => [<User1>, <User2>, ...],
+  #     "maybe" => [<User3>, ...],
+  #     ...
+  #   }
+  def my_event_users_by_status
+    return self.my_events.inject({}){|result, my_event| result[my_event.status] ||= []; result[my_event.status] << my_event.user; result}
   end
 
   #---[ Solr searching ]--------------------------------------------------
@@ -394,8 +405,8 @@ EOF
   #   for it if it doesn't have a URL already.
   #
   # Example:
-  #   ics1 = Event.to_ical(myevent)
-  #   ics2 = Event.to_ical(myevents, :url_helper => lambda{|event| event_url(event)})
+  #   ics1 = Event.to_ical(event)
+  #   ics2 = Event.to_ical(events, :url_helper => lambda{|event| event_url(event)})
   def self.to_ical(events, opts={})
     events = [events].flatten
     icalendar = Vpim::Icalendar.create2

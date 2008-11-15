@@ -1,2 +1,2 @@
-module Account::ReservationsHelper
+module Account::MyEventsHelper
 end

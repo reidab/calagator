@@ -148,7 +148,8 @@ module ApplicationHelper
     return h(HTMLEntitiesCoder.decode(string))
   end
 
-  def reservation_status_for(event)
-    return logged_in? ? current_user.reservations.find_by_event_id(event.id).ergo.status : nil
+  # Return the MyEvent instance for the currently-logged in user for this event, or nil if not logged in or there's no association.
+  def my_event_for(event)
+    return logged_in? ? current_user.my_event_for(event) : nil
   end
 end

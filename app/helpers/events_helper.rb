@@ -48,11 +48,11 @@ module EventsHelper
     "#{event.start_time.utc.strftime(GOOGLE_TIME_FORMAT)}/#{end_time.utc.strftime(GOOGLE_TIME_FORMAT)}"
   end
 
-  def link_for_reservation(text, event, for_status, current_status)
+  def link_for_my_event(text, event, for_status, current_status)
     link_to(
-      text, 
-      create_or_update_reservations_path(:status => for_status, :event_id => event.id), 
-      :id => "event-reservations-#{for_status}",
+      text,
+      create_or_update_account_my_events_path(:status => for_status, :event_id => event.id),
+      :id => "event_my_events-#{for_status}",
       :class => for_status == current_status ? 'checkmarked' : '',
       :xstatus => for_status,
       :xevent_id => event.id

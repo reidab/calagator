@@ -69,8 +69,8 @@
       </div>
     </li>
   </ul>
-  <div id="event-reservations-panel">
-    <%= render :partial => "reservation", :locals => {:event => @event} %>
+  <div id="event_my_events_panel">
+    <%= render :partial => "my_events_panel", :locals => {:event => @event, :my_event => my_event_for(@event)} %>
   </div>
   <h3>Modify</h3>
   <div id='edit_link'>
@@ -90,8 +90,8 @@
 </div>
 
 <% if logged_in?; insert_javascript %{
-bind_event_reservation_buttons_to_ajax = function() {
-  $('#event-reservation-buttons a').click(function(event) {
+bind_event_my_event_buttons_to_ajax = function() {
+  $('#event_my_event_buttons a').click(function(event) {
     $e = event; // Save event as global for debugging
     event.preventDefault();
     target = $(event.target);
@@ -99,13 +99,13 @@ bind_event_reservation_buttons_to_ajax = function() {
     clicked_event_id = target.attr('xevent_id');
     target.removeClass('checkmarked');
     target.addClass('spinning');
-    $.get('/reservations/create_or_update', {'status': clicked_status, 'event_id': clicked_event_id}, function(data) {
-      $.get('#{reservation_panel_event_url(@event)}', function(data){
-        $('#event-reservations-panel').html(data);
-        bind_event_reservation_buttons_to_ajax();
+    $.get('#{create_or_update_account_my_events_path}', {'status': clicked_status, 'event_id': clicked_event_id}, function(data) {
+      $.get('#{my_events_panel_event_path(@event)}', function(data){
+        $('#event_my_events_panel').html(data);
+        bind_event_my_event_buttons_to_ajax();
       });
     });
   });
 }
-bind_event_reservation_buttons_to_ajax();
+bind_event_my_event_buttons_to_ajax();
 }; end %>

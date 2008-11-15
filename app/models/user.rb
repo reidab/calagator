@@ -1,6 +1,6 @@
 require 'digest/sha1'
 class User < ActiveRecord::Base
-  has_many :reservations
+  has_many :my_events
 
   # Virtual attribute for the unencrypted password
   attr_accessor :password
@@ -86,6 +86,12 @@ class User < ActiveRecord::Base
 
   def label
     return(self.fullname || self.login || URI.parse(login).host)
+  end
+
+  # Return nil or the MyEvent instance for the this user and the given Event (instance or ID).
+  def my_event_for(event)
+    event_id = event.kind_of?(Event) ? event.id : event
+    return self.my_events.find_by_event_id(event_id)
   end
 
 protected
