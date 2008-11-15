@@ -215,7 +215,7 @@ class Event < ActiveRecord::Base
   # with that status. E.g.,
   #
   #   {
-  #     "yes" => [<User1>, <User2>, ...],
+  #     "yes"   => [<User1>, <User2>, ...],
   #     "maybe" => [<User3>, ...],
   #     ...
   #   }

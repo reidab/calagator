@@ -2,7 +2,7 @@ class Accounts::MyEventsController < ApplicationController
   before_filter :login_required
 
   def index
-    @my_events = current_user.my_events.sort_by{|t| t.event.end_time.to_i}.reverse
+    @my_events_by_status = current_user.my_events_by_status
   end
 
   def create_or_update

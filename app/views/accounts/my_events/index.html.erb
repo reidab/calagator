@@ -1,31 +1,20 @@
-<h1>My events</h1>
-<% if @my_events.blank? %>
+<h1>My events by status</h1>
+<% if @my_events_by_status.blank? %>
   <p>
     &mdash; You have not added any events &mdash;
   </p>
 <% else %>
-<ul>
-  <% @my_events.each do |my_event| %>
-    <%# TODO come up with sensible formatting %>
-    <%# TODO hide old events %>
-    <li>
-      You <strong>
-      <%= 
-        case my_event.status.to_sym
-        when :yes
-          "are going to"
-        when :no
-          "are not going to"
-        when :maybe
-          "may be going to"
-        end
-      %>
-      </strong>
-      <%= link_to cleanse(my_event.event.title), event_path(my_event.event) %> 
-      on
-      <br />
-      <%= normalize_time(my_event.event) %> 
-    </li>
+  <%# TODO reuse table formatting from overview page %>
+  <% @my_events_by_status.each_pair do |status, events| %>
+    <h3>
+      <%= MyEvent.status_label_for(status) %>
+    </h3>
+    <ul>
+      <% events.each do |event| %>
+        <li>
+          <%= link_to %{#{cleanse(event.title)} &mdash; #{normalize_time(event)}}, event_path(event) %>
+        </li>
+      <% end %>
+    </ul>
   <% end %>
-</ul>
 <% end %>

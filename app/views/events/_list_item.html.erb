@@ -1,5 +1,4 @@
 <%
-#require 'rubygems'; require 'ruby-debug'; Debugger.start; debugger; 1 # FIXME
 new_day ||= nil
 opts ||= {}
 opts[:dates] = opts.has_key?(:dates) ? opts[:dates] : true
@@ -15,6 +14,9 @@ show_year ||= false
     <% end %>
   </div>
   <div class='list_content'>
+    <% if logged_in? and current_user.interested_in?(event) %>
+      <%= image_tag 'star.png' %>
+    <% end %>
     <a class='summary' href='<%= url_for event_url(event) %>'><%= cleanse event.title.strip_html %></a>
     <div>
     <%= normalize_time(event, :context => event.start_time.to_date) -%>
