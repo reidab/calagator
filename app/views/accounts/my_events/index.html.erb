@@ -12,7 +12,9 @@
     <ul>
       <% events.each do |event| %>
         <li>
-          <%= link_to %{#{cleanse(event.title)} &mdash; #{normalize_time(event)}}, event_path(event) %>
+          <%= link_to cleanse(event.title), event_path(event) %>
+          &mdash;
+          <%= normalize_time(event) %>
         </li>
       <% end %>
     </ul>

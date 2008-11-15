@@ -101,8 +101,24 @@ class User < ActiveRecord::Base
   #     "no"  => [<Event3>, ...],
   #     ...
   #   }
-  def my_events_by_status
-    return self.my_events.inject({}){|result, my_event| result[my_event.status] ||= []; result[my_event.status] << my_event.event; result}
+  def my_events_by_status(opts={})
+    # TODO reuse code from find_by_dates to find current events
+    # TODO consider making use of named scopes
+    result = {}
+    my_filtered_events = \
+      if opts[:current]
+        self.my_events.find(:all, :include => :event, :conditions => ['events.start_time >= ?', Time.now.utc])
+      else
+        my_events
+      end
+    my_filtered_events.each do |my_event|
+      result[my_event.status] ||= []
+      result[my_event.status] << my_event.event
+    end
+    result.each_pair do |status, events|
+      result[status] = events.sort_by{|event| event.start_time}
+    end
+    return result
   end
 
   # Is the user interested in this event?
