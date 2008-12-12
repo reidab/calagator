@@ -6,14 +6,15 @@ class EventsController < ApplicationController
   # GET /events.xml
   def index
     order = params[:order] || 'date'
-    order = case order
-            when 'date'
-              'start_time'
-            when 'name'
-              'lower(events.title), start_time'
-            when 'venue'
-              'lower(venues.title), start_time'
-            end
+    order = \
+      case order
+        when 'date'
+          'start_time'
+        when 'name'
+          'lower(events.title), start_time'
+        when 'venue'
+          'lower(venues.title), start_time'
+        end
 
     default_start_date = Time.today
     default_end_date   = Time.today + 3.months
@@ -119,7 +120,7 @@ class EventsController < ApplicationController
           else
             redirect_to(@event)
           end
-          }
+        }
         format.xml  { render :xml => @event, :status => :created, :location => @event }
       else
         format.html { render :action => "new" }
@@ -152,8 +153,8 @@ class EventsController < ApplicationController
           else
             redirect_to(@event)
           end
-          }
-          format.xml  { head :ok }
+        }
+        format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml => @event.errors, :status => :unprocessable_entity }
