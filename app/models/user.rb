@@ -94,7 +94,14 @@ class User < ActiveRecord::Base
     return self.my_events.find_by_event_id(event_id)
   end
 
-  # Return data structure that's a hash of MyEvent statuses to arrays of events this user listed as interesting. E.g.,
+  # Return data structure that's a hash of MyEvent statuses to arrays of events
+  # this user registered a status for. 
+  #
+  # Options:
+  # * :current => Only current events? Defaults to false.
+  # * :interesting => Only interesting events? Defaults to false, all events.
+  #
+  # E.g.,
   #
   #   {
   #     "yes" => [<Event1>, <Event2>, ...],
@@ -109,9 +116,12 @@ class User < ActiveRecord::Base
       if opts[:current]
         self.my_events.find(:all, :include => :event, :conditions => ['events.start_time >= ?', Time.now.utc])
       else
-        my_events
+        self.my_events
       end
     my_filtered_events.each do |my_event|
+      if opts[:interesting]
+        next unless my_event.interesting?
+      end
       result[my_event.status] ||= []
       result[my_event.status] << my_event.event
     end

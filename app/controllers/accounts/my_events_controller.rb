@@ -2,7 +2,7 @@ class Accounts::MyEventsController < ApplicationController
   before_filter :login_required
 
   def index
-    @my_events_by_status = current_user.my_events_by_status(:current => true)
+    @my_events_by_status = current_user.my_events_by_status(:current => true, :interesting => true)
   end
 
   def create_or_update

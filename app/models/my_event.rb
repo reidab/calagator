@@ -26,4 +26,9 @@ class MyEvent < ActiveRecord::Base
   def status_label
     return self.class.status_label_for(self.status)
   end
+
+  # Is this event interesting to the user? Determined by checking the INTERESTING_STATUSES.
+  def interesting?
+    return INTERESTING_STATUSES.include?(self.status.to_s)
+  end
 end
