@@ -5,12 +5,13 @@
   </p>
 <% else %>
   <%# TODO reuse table formatting from overview page %>
-  <% @my_events_by_status.each_pair do |status, events| %>
+  <% MyEvent::STATUSES.each do |status| %>
+    <% next if @my_events_by_status[status].blank? -%>
     <h3>
       <%= MyEvent.status_label_for(status) %>
     </h3>
     <ul>
-      <% events.each do |event| %>
+      <% @my_events_by_status[status].each do |event| %>
         <li>
           <%= link_to cleanse(event.title), event_path(event) %>
           &mdash;
