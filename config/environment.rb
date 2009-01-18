@@ -15,12 +15,13 @@ Rails::Initializer.run do |config|
   config.gem "htmlentities"
   config.gem "vpim"
   config.gem "lucene_query"
-  config.gem "has_many_polymorphs"
   config.gem "hpricot"
   config.gem "rubyzip", :lib =>  "zip/zip"
   config.gem 'rspec', :version => '>= 1.1.12', :lib => false
   config.gem 'rspec-rails', :version => '>= 1.1.12', :lib => false
   config.gem "facets", :version => ">=2.5.0", :lib => false
+
+  config.gem "johnsbrn-has_many_polymorphs", :lib => 'has_many_polymorphs', :source => "http://gems.github.com", :version => ">=2.13"
 
   config.time_zone = "Pacific Time (US & Canada)"
 
