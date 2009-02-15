@@ -20,8 +20,8 @@ describe EventsController, "when displaying index" do
   it "should produce ATOM" do
     post :index, :format => "atom"
 
-    struct = XmlSimple.xml_in_string(response.body)
-    struct["entry"].should be_a_kind_of(Array)
+    hash = Hash.from_xml(response.body)
+    hash["feed"]["entry"].should be_a_kind_of(Array)
   end
 
   describe "in ICS format" do
@@ -321,8 +321,8 @@ describe EventsController, "when searching" do
     it "should produce ATOM" do
       post :search, :query => "myquery", :format => "atom"
 
-      struct = XmlSimple.xml_in_string(response.body)
-      struct["entry"].should be_a_kind_of(Array)
+      hash = Hash.from_xml(response.body)
+      hash["feed"]["entry"].should be_a_kind_of(Array)
     end
 
     describe "in ICS format" do
