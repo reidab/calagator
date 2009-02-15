@@ -21,7 +21,7 @@ Rails::Initializer.run do |config|
   config.gem 'rspec-rails', :version => '>= 1.1.12', :lib => false
   config.gem "facets", :version => ">=2.5.0", :lib => false
 
-  config.gem "johnsbrn-has_many_polymorphs", :lib => 'has_many_polymorphs', :source => "http://gems.github.com", :version => ">=2.13"
+  config.gem "johnsbrn-has_many_polymorphs", :lib => 'has_many_polymorphs', :source => "http://gems.github.com", :version => ">=2.13.3"
 
   config.time_zone = "Pacific Time (US & Canada)"
 
