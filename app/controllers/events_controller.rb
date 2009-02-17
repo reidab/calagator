@@ -24,7 +24,7 @@ class EventsController < ApplicationController
     rescue ArgumentError => e
       @start_date = default_start_date
       @end_date   = default_end_date
-      flash[:failure] = "Error: You tried to filter by an invalid date"
+      flash[:failure] = "You tried to filter by an invalid date"
     end
 
     @events_deferred = lambda {
@@ -36,14 +36,7 @@ class EventsController < ApplicationController
 
     @page_title = "Events"
 
-    respond_to do |format|
-      format.html # index.html.erb
-      format.kml  # index.kml.erb
-      format.xml  { render :xml => @events_deferred.call }
-      format.json { render :json => @events_deferred.call }
-      format.ics  { ical_export() }
-      format.atom # index.atom.builder
-    end
+    render_events(@events_deferred)
   end
 
   # GET /events/1
@@ -194,23 +187,45 @@ class EventsController < ApplicationController
 
   # Search!!!
   def search
-    @query = params[:query]
-    if @query.blank?
+    # TODO Refactor this method and move much of it to the record-managing
+    # logic into a generalized Event::search method.
+
+    @query = params[:query].with{blank? ? nil : self}
+    @tag = params[:tag].with{blank? ? nil : self}
+    @current = ["1", "true"].include?(params[:current].to_s) ? true : false
+    @order = params[:order]
+
+    if @order && @order == "score" && @tag
+      flash[:failure] = "You cannot sort tags by score"
+      @order = nil
+    end
+
+    if !@query && !@tag
       flash[:failure] = "You must enter a search query"
       return redirect_to(root_path)
     end
-    @grouped_events = Event.search_grouped_by_currentness(params[:query], :order => params[:order])
+
+    if @query && @tag
+      # TODO make it possible to search by tag and query simultaneously
+      flash[:failure] = "You can't search by tag and query at the same time"
+      return redirect_to(root_path)
+    elsif @query
+      @grouped_events = Event.search_grouped_by_currentness(@query, :order => @order, :skip_old => @current)
+    elsif @tag
+      if @order
+        # TODO make it possible to order items when searching by tag
+        flash[:failure] = "Sorry, you can't order events returned by a tag search yet"
+        @order = nil
+      end
+      @grouped_events = Event.search_tag_grouped_by_currentness(@tag, :order => @order, :current => @current)
+    end
 
     # setting @events so that we can reuse the index atom builder
     @events = @grouped_events[:past] + @grouped_events[:current]
 
     @page_title = "Search Results for '#{@query}'"
 
-    respond_to do |format|
-      format.html
-      format.atom { render :template => 'events/index' }
-      format.ics { ical_export(@events) }
-    end
+    render_events(@events)
   end
 
   def refresh_version
@@ -228,10 +243,28 @@ class EventsController < ApplicationController
 
 protected
 
-  # export events to an iCalendar file
+  # Export +events+ to an iCalendar file.
   def ical_export(events=nil)
     events = events || Event.find_future_events
     render(:text => Event.to_ical(events, :url_helper => lambda{|event| event_url(event)}), :mime_type => 'text/calendar')
+  end
+
+  # Render +events+ for a particular format.
+  def render_events(events)
+    respond_to do |format|
+      format.html # *.html.erb
+      format.kml  # *.kml.erb
+      format.ics  { ical_export(yield_events(events)) }
+      format.atom { render :template => 'events/index' }
+      format.xml  { render :xml  => yield_events(events) }
+      format.json { render :json => yield_events(events) }
+    end
+  end
+
+  # Return an array of Events from a +container+, which can either be an array
+  # of Events or a lambda that returns an array of Events.
+  def yield_events(container)
+    return container.respond_to?(:call) ? container.call : container
   end
 
 end

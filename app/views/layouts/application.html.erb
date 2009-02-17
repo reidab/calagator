@@ -9,20 +9,7 @@
 
     <div id="global_header">
       <a href="/" id="project_title">Calagator</a>
-
       <div id="top_menu">
-
-          <%
-          link_class = {
-              # :home =>   (controller.controller_name == 'site' ? 'active first' : 'first'),
-              # :import => (controller.controller_name == 'sources' && 'active'),
-              :events => (( controller.controller_name == 'events' ||
-                            controller.controller_name == 'sources' ||
-                            controller.controller_name == 'site')  && 'active'),
-              :venues => (controller.controller_name == 'venues'  && 'active'),
-            }
-          %>
-
          <div id='app_menu'>
           <ul>
               <li class='<%=link_class[:events]%>'><%= link_to "Events", events_path %></li>
@@ -37,12 +24,12 @@
         </div>
         <% form_tag '/events/search', :method => :get do %>
           <div id='search_form'>
-            <label for="search_field">Search Events</label>
-            <% if request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"].include?("Safari") %>
-              <input type="search" name="query" value="<%= @query %>" results="5" id="search_field">
-            <% else %>
-              <%= text_field_tag 'query', @query, :id => 'search_field' %>
-            <% end %>
+          <label for="search_field">Search Events</label>
+          <% if request.env["HTTP_USER_AGENT"] && request.env["HTTP_USER_AGENT"].include?("Safari") %>
+            <input type="search" name="query" value="<%= @query %>" results="5" id="search_field">
+          <% else %>
+            <%= text_field_tag 'query', @query, :id => 'search_field' %>
+          <% end %>
           </div>
         <% end -%>
       </div>

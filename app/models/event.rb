@@ -308,12 +308,34 @@ class Event < ActiveRecord::Base
     return self.find_by_solr(formatted_query, solr_opts).results
   end
 
+  # Return events matching given +tag+ grouped by their currentness, see
+  # ::group_by_currentness for data structure details.
+  #
+  # Options:
+  # * :current => Limit results to only current events? Defaults to false.
+  def self.search_tag_grouped_by_currentness(tag, opts={})
+    result = self.group_by_currentness(self.tagged_with(tag, opts))
+    # TODO Avoid searching for :past results. Currently finding them and discarding them when not wanted.
+    result[:past] = [] if opts[:current]
+    return result
+  end
+
   # Return events grouped by their currentness. Accepts the same +args+ as
   # #search. The results hash is keyed by whether the event is current
   # (true/false) and the values are arrays of events.
   def self.search_grouped_by_currentness(*args)
-    results = self.search(*args).group_by(&:current?)
-    return {:current => results[true] || [], :past => results[false] || []}
+    return self.group_by_currentness(self.search(*args))
+  end
+
+  # Return +events+ grouped by currentness using a data structure like:
+  #
+  #   { 
+  #     :current => [ my_current_event, my_other_current_event ],
+  #     :past => [ my_past_event ],
+  #   }
+  def self.group_by_currentness(events)
+    grouped = events.group_by(&:current?)
+    return {:current => grouped[true] || [], :past => grouped[false] || []}
   end
 
   #---[ Solr helpers ]----------------------------------------------------
@@ -343,11 +365,11 @@ class Event < ActiveRecord::Base
   end
 
   def event_title_for_solr
-    self.title.to_s
+    self.title.to_s.downcase
   end
 
   def venue_title_for_solr
-    self.venue.ergo.title.to_s
+    self.venue.ergo.title.to_s.downcase
   end
 
   # Return a string of all indexable fields, which may be useful for doing duplicate checks

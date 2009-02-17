@@ -1,5 +1,46 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
+describe EventsController, "when displaying index" do
+  integrate_views
+  fixtures :events, :venues
+
+  it "should produce HTML" do
+    get :index, :format => "html"
+
+    response.should have_tag("table.event_table")
+  end
+
+  it "should produce JSON" do
+    post :index, :format => "json"
+
+    struct = ActiveSupport::JSON.decode(response.body)
+    struct.should be_a_kind_of(Array)
+  end
+
+  it "should produce ATOM" do
+    post :index, :format => "atom"
+
+    struct = XmlSimple.xml_in_string(response.body)
+    struct["entry"].should be_a_kind_of(Array)
+  end
+
+  describe "in ICS format" do
+
+    it "should produce ICS" do
+      post :index, :format => "ics"
+
+      response.body.should have_text(/BEGIN:VEVENT/)
+    end
+
+    it "should render all future events" do
+      post :index, :format => "ics"
+      response.body.should =~ /SUMMARY:#{events(:tomorrow).title}/
+      response.body.should_not =~ /SUMMARY:#{events(:old_event).title}/
+    end
+
+  end
+end
+
 describe EventsController, "when displaying events" do
   it "should show an event" do
     event = Event.new(:start_time => Time.now)
@@ -113,7 +154,7 @@ describe EventsController, "when creating or updating events" do
       })
       Event.stub!(:find).and_return(@event)
     end
-    
+
     it "should display form for editing event" do
       Event.should_receive(:find).and_return(@event)
 
@@ -165,7 +206,7 @@ describe EventsController, "when creating or updating events" do
       post "update", :id => 1234
       response.should render_template(:edit)
     end
-    
+
     it "should stop evil robots" do
       put "update", :id => 1234, :trap_field => "I AM AN EVIL ROBOT, I EAT OLD PEOPLE'S MEDICINE FOR FOOD!"
       response.should render_template(:edit)
@@ -232,6 +273,74 @@ describe EventsController, "when searching" do
     response.should redirect_to(root_path)
   end
 
+  it "should be able to only return current events" do
+    Event.should_receive(:search).with("myquery", :order => nil, :skip_old => true).and_return([])
+
+    post :search, :query => "myquery", :current => "1"
+  end
+
+  it "should be able to only return events matching specific tag" do
+    Event.should_receive(:tagged_with).with("foo", :current => false, :order => nil).and_return([])
+
+    post :search, :tag => "foo"
+  end
+
+  it "should warn if user tries ordering tags by score" do
+    Event.should_receive(:tagged_with).with("foo", :current => false, :order => nil).and_return([])
+
+    post :search, :tag => "foo", :order => "score"
+    flash[:failure].should_not be_blank
+  end
+
+  describe "when returning results" do
+    integrate_views
+    fixtures :events, :venues
+
+    before do
+      @results = {
+        :current => [events(:calagator_codesprint), events(:tomorrow)],
+        :past    => [events(:old_event)],
+      }
+      Event.should_receive(:search_grouped_by_currentness).and_return(@results)
+    end
+
+    it "should produce HTML" do
+      post :search, :query => "myquery", :format => "html"
+
+      response.should have_tag("table.event_table")
+      assigns[:events].should == @results[:past] + @results[:current]
+    end
+
+    it "should produce JSON" do
+      post :search, :query => "myquery", :format => "json"
+
+      struct = ActiveSupport::JSON.decode(response.body)
+      struct.should be_a_kind_of(Array)
+    end
+
+    it "should produce ATOM" do
+      post :search, :query => "myquery", :format => "atom"
+
+      struct = XmlSimple.xml_in_string(response.body)
+      struct["entry"].should be_a_kind_of(Array)
+    end
+
+    describe "in ICS format" do
+
+      it "should produce ICS" do
+        post :search, :query => "myquery", :format => "ics"
+
+        response.body.should have_text(/BEGIN:VEVENT/)
+      end
+
+      it "should produce events matching the query" do
+        post :search, :query => "myquery", :format => "ics"
+        response.body.should =~ /SUMMARY:#{events(:tomorrow).title}/
+        response.body.should =~ /SUMMARY:#{events(:old_event).title}/
+      end
+
+    end
+  end
 end
 
 describe EventsController, "when deleting" do

@@ -18,6 +18,21 @@ class ApplicationController < ActionController::Base
 
 protected
 
+  #---[ Helpers ]---------------------------------------------------------
+
+  # Returns a data structure used for telling the CSS menu which part of the
+  # site the user is on. The structure's keys are the symbol names of resources
+  # and their values are either "active" or nil.
+  def link_class
+    return @_link_class_cache ||= {
+      :events => (( controller_name == 'events' ||
+                    controller_name == 'sources' ||
+                    controller_name == 'site')  && 'active'),
+      :venues => (controller_name == 'venues'  && 'active'),
+    }
+  end
+  helper_method :link_class
+
   def subnav_content
     name = \
       case controller_name
