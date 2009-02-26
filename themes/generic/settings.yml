@@ -1,11 +1,11 @@
 # Site's name:
-name: 'Calagator'
+name: 'Calagator Anytown'
 
 # Site's tagline:
-tagline: "Portland's Tech Calendar"
+tagline: "Your Community's Event Calendar"
 
 # Site's URL with trailing slash:
-url: 'http://calagator.org/'
+url: 'http://anytown.calagator.org/'
 
 # Deault timezone, run "rake time:zones:all" for options:
 timezone: 'Pacific Time (US & Canada)'

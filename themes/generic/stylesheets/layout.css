@@ -1,3 +1,5 @@
+/* @override http://localhost:3000/themes/generic/stylesheets/layout.css */
+
 /* @group Global Layout
 ----------------------------------------*/
 
@@ -6,18 +8,18 @@ body {
 }
 
 #global_header {
-  background: #82c555;
+  background: #888;
   position: relative;
   height: 95px;
 }
 
 #global_header a {
-  color: #f9ffec
+  color: #fff
 }
 
 #top_footer {
-  background: #445544;
-  color: #f9ffec;
+  background: #666;
+  color: #fff;
   padding: .5em 30px .5em 40px;
   font-size: 70%;
   clear: both;
@@ -25,14 +27,12 @@ body {
 
 
 #project_title {
-  background: url('/images/head_calagator.gif') no-repeat;
+  font-size: 2em;
   height: 31px;
   left: 40px;
-  overflow: hidden;
   position: absolute;
-  text-indent: -999px;
-  top: 25px;
-  width: 135px;
+  top: 20px;
+
 }
 
 #app_menu ul {
@@ -54,7 +54,7 @@ body {
 }
 
 #app_menu li.active {
-  background: url('/images/nav_marker.gif') no-repeat center bottom;
+  background: url('/images/nav_marker.png') no-repeat center bottom;
 }
 
 #project_menu {
@@ -74,7 +74,7 @@ body {
 
 .subnav {
   font-size: 1.2em;
-  background: #bcf794;
+  background: #333;
   padding-left: 40px;
   height: 2em;
   line-height: 2em;
@@ -91,12 +91,12 @@ body {
 }
 
 .subnav a {
-  color: #445544;
+  color: #000;
   padding-bottom: .42em;
 }
 
 .subnav .active {
-  background: url('/images/subnav_marker.gif') no-repeat center bottom;
+  background: url('/images/subnav_marker.png') no-repeat center bottom;
 }
 
 
@@ -163,7 +163,7 @@ ul.event_list .list_date {
 
 .event_table .day_of_week,
 ul.event_list .day_of_week {
-  color: #59a12d;
+  color: #666;
   font-weight: bold;
 }
 
@@ -173,7 +173,7 @@ ul.event_list .day_of_week {
 
 
 .sidebar {
-  background: #e8fbfe;
+  background: #eee;
   padding: 2em 30px 1em 1em;
   position: absolute;
   top: 0;
@@ -245,14 +245,14 @@ ul.event_list .list_date {
 }
 
 .single_event .date {
-  color: #82c555;
+  color: #666;
   font-size: 1.3em;
   font-weight: bold;
   margin-bottom: 1em;
 }
 
 .single_event .location.vcard {
-  background: #e8fbfe;
+  background: #eee;
   width: 45em;
   height: 16em;
   padding: 1em;
