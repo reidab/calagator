@@ -10,11 +10,52 @@ describe EventsController, "when displaying index" do
     response.should have_tag("table.event_table")
   end
 
-  it "should produce JSON" do
-    post :index, :format => "json"
+  describe "in XML format" do
 
-    struct = ActiveSupport::JSON.decode(response.body)
-    struct.should be_a_kind_of(Array)
+    it "should produce XML" do
+      post :index, :format => "xml"
+
+      struct = XmlSimple.xml_in_string(response.body)
+      struct["event"].should be_a_kind_of(Array)
+    end
+
+    it "should include venue details" do
+      post :index, :format => "xml"
+
+      struct = XmlSimple.xml_in_string(response.body)
+      event = struct["event"].first
+      venue = event["venue"].first
+      venue_title = venue["title"].first  # Why XML? Why?
+      venue_title.should be_a_kind_of(String)
+      venue_title.length.should > 0
+    end
+
+  end
+
+  describe "in JSON format" do
+
+    it "should produce JSON" do
+      post :index, :format => "json"
+
+      struct = ActiveSupport::JSON.decode(response.body)
+      struct.should be_a_kind_of(Array)
+    end
+
+    it "should accept a JSONP callback" do
+      post :index, :format => "json", :callback => "some_function"
+
+      response.body.split("\n").join.should match(/^\s*some_function\(.*\);?\s*$/)
+    end
+
+    it "should include venue details" do
+      post :index, :format => "json"
+
+      struct = ActiveSupport::JSON.decode(response.body)
+      event = struct.first
+      event["venue"]["title"].should be_a_kind_of(String)
+      event["venue"]["title"].length.should > 0
+    end
+
   end
 
   it "should produce ATOM" do
@@ -311,11 +352,52 @@ describe EventsController, "when searching" do
       assigns[:events].should == @results[:past] + @results[:current]
     end
 
-    it "should produce JSON" do
-      post :search, :query => "myquery", :format => "json"
+    describe "in XML format" do
 
-      struct = ActiveSupport::JSON.decode(response.body)
-      struct.should be_a_kind_of(Array)
+      it "should produce XML" do
+        post :search, :query => "myquery", :format => "xml"
+
+        struct = XmlSimple.xml_in_string(response.body)
+        struct["event"].should be_a_kind_of(Array)
+      end
+
+      it "should include venue details" do
+        post :search, :query => "myquery", :format => "xml"
+
+        struct = XmlSimple.xml_in_string(response.body)
+        event = struct["event"].first
+        venue = event["venue"].first
+        venue_title = venue["title"].first  # Why XML? Why?
+        venue_title.should be_a_kind_of(String)
+        venue_title.length.should > 0
+      end
+
+    end
+
+    describe "in JSON format" do
+
+      it "should produce JSON" do
+        post :search, :query => "myquery", :format => "json"
+
+        struct = ActiveSupport::JSON.decode(response.body)
+        struct.should be_a_kind_of(Array)
+      end
+
+      it "should accept a JSONP callback" do
+        post :search, :query => "myquery", :format => "json", :callback => "some_function"
+
+        response.body.split("\n").join.should match(/^\s*some_function\(.*\);?\s*$/)
+      end
+
+      it "should include venue details" do
+        post :search, :query => "myquery", :format => "json"
+
+        struct = ActiveSupport::JSON.decode(response.body)
+        event = struct.first
+        event["venue"]["title"].should be_a_kind_of(String)
+        event["venue"]["title"].length.should > 0
+      end
+
     end
 
     it "should produce ATOM" do

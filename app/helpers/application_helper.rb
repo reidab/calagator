@@ -1,6 +1,12 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
 
+  # Returns HTML string of an event or venue description for display in a view.
+  def format_description(string)
+    return upgrade_br(simple_format(auto_link(white_list(string.gsub(%r{<br\s?/?>}, "\n")))))
+  end
+
+  # Return a HTML string with the BR tags converted to XHTML compliant markup.
   def upgrade_br(content)
     content.gsub('<br>','<br />')
   end
@@ -92,7 +98,7 @@ module ApplicationHelper
   def datestamp(item)
     stamp = "This item was "
     if item.source.nil?
-      stamp << "added directly to Calagator"
+      stamp << "added directly to #{SETTINGS.name}"
     else
       stamp << "imported from " << link_to(truncate(item.source.name, 40), item.source.name)
     end
@@ -140,12 +146,9 @@ module ApplicationHelper
     # TODO Figure out how to set tabindex, because neither of these work right.
   end
 
-  require 'htmlentities'
-  HTMLEntitiesCoder = HTMLEntities.new
-
   # Returns a string with safely encoded entities thanks to #h, while preserving any existing HTML entities.
   def cleanse(string)
-    return h(HTMLEntitiesCoder.decode(string))
+    return escape_once(string)
   end
 
   # Return the MyEvent instance for the currently-logged in user for this event, or nil if not logged in or there's no association.

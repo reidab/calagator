@@ -63,8 +63,8 @@ class EventsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @event }
-      format.json { render :json => @event }
+      format.xml  { render :xml  => @event.to_xml(:include => :venue) }
+      format.json { render :json => @event.to_json(:include => :venue), :callback => params[:callback] }
       format.ics { ical_export([@event]) }
     end
   end
@@ -256,8 +256,8 @@ protected
       format.kml  # *.kml.erb
       format.ics  { ical_export(yield_events(events)) }
       format.atom { render :template => 'events/index' }
-      format.xml  { render :xml  => yield_events(events) }
-      format.json { render :json => yield_events(events) }
+      format.xml  { render :xml  => yield_events(events).to_xml(:include => :venue) }
+      format.json { render :json => yield_events(events).to_json(:include => :venue), :callback => params[:callback] }
     end
   end
 

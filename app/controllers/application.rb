@@ -16,6 +16,10 @@ class ApplicationController < ActionController::Base
   # Be sure to include AuthenticationSystem in Application Controller instead
   include AuthenticatedSystem
 
+  # Setup theme
+  layout "application"
+  theme THEME_NAME # DEPENDENCY: lib/theme_reader.rb
+
 protected
 
   #---[ Helpers ]---------------------------------------------------------
