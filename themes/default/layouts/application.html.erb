@@ -66,14 +66,24 @@
         <% end -%>
       </div>
     </div>
-
-    <% # Pick a subnav %>
-
-    <%= render(:partial => 'events/subnav') if link_class[:events] == 'active' %>
-    <%= render(:partial => 'venues/subnav') if link_class[:venues] == 'active' %>
-    <%= render(:partial => 'sources/subnav') if link_class[:import] == 'active' %>
-
-
+    
+    <div class="subnav">
+      <div id="<%= controller.controller_name %>_subnav">
+        <%= subnav_content %>
+      </div>
+      <div id="user-panel">
+        <% if logged_in? %>
+          <%= current_user.label %>
+          :
+          <%= link_to "My events", account_my_events_path %>
+          /
+          <%= link_to "Logout", logout_path %>
+        <% else %>
+          <%= link_to "Login", login_path %>
+        <% end %>
+      </div>
+    </div>
+    
     <div id="content">
       <%# flash[:success] = "yay"; flash[:failure] = "meh" %>
       <%= render_flash %>
