@@ -40,7 +40,7 @@ protected
   def subnav_content
     name = \
       case controller_name
-      when "site", "application"
+      when "site", "application", "sources"
         "events"
       else
         controller_name
