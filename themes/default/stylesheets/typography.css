@@ -194,3 +194,11 @@ a.view_more {
   font-weight: bold;
   margin: 2em 0 2em 10em;
 }
+
+a.external {
+  padding-left: 20px;
+  background-repeat: no-repeat;
+  border-bottom: 1px dashed #ccc;
+}
+a.external.plancast { background-image: url("/images/external_sites/plancast.png"); }
+a.external.upcoming { background-image: url("/images/external_sites/upcoming.png"); }
