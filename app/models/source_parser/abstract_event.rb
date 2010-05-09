@@ -5,5 +5,6 @@ class SourceParser
     :start_time,
     :end_time,
     :url,
-    :location)
+    :location,
+    :tag_list)
 end
