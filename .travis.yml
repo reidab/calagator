@@ -22,10 +22,11 @@ env:
   - DB=mysql
   - DB=postgresql
   - DB=sqlite
+before_install:
+  - ruby ci/copy_database_config.rb
 before_script:
   - mysql -e 'create database calagator_test;'
   - psql -c 'create database calagator_test;' -U postgres
-  - ruby ci/copy_database_config.rb
   - bundle exec rake db:migrate
   - cp "config/secrets.yml.sample" "config/secrets.yml"
 script:
