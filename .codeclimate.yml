@@ -14,7 +14,7 @@ ratings:
     - app/**
     - lib/**
     - "**.rb"
-  exclude_paths:
-    - spec/**
-    - vendor/**/*
+exclude_paths:
+  - spec/**/*
+  - vendor/**/*
 
